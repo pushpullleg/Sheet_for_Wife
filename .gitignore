@@ -1,8 +1,10 @@
 # Google Apps Script files (not needed on GitHub)
 Code.gs
 
-# Configuration files with sensitive data (DO NOT COMMIT)
-script.js
+# Configuration files with sensitive data
+# NOTE: script.js is currently committed for deployment purposes
+# To prevent future commits: uncomment the line below
+# script.js
 
 # Documentation files (optional - you can include README.md if you want)
 GOOGLE_SHEETS_SETUP.md
