@@ -58,6 +58,9 @@ const feedback = document.getElementById('feedback');
 const amountError = document.getElementById('amountError');
 const categoryError = document.getElementById('categoryError');
 const budgetRemaining = document.getElementById('budgetRemaining');
+const modal = document.getElementById('modal');
+const modalMessage = document.getElementById('modalMessage');
+const modalClose = document.getElementById('modalClose');
 
 // ============================================================================
 // INITIALIZATION
@@ -237,6 +240,47 @@ function showFeedback(message, type) {
     }
 }
 
+/**
+ * Toggles a button loading state with text swap and spinner class
+ * 
+ * @param {HTMLButtonElement} button - Target button
+ * @param {boolean} isLoading - Whether to show loading state
+ * @param {string} loadingText - Text to show while loading
+ */
+function setButtonLoading(button, isLoading, loadingText) {
+    if (isLoading) {
+        if (!button.dataset.originalText) {
+            button.dataset.originalText = button.textContent;
+        }
+        button.textContent = loadingText;
+        button.disabled = true;
+        button.classList.add('btn-loading');
+    } else {
+        const original = button.dataset.originalText;
+        if (original) {
+            button.textContent = original;
+        }
+        button.disabled = false;
+        button.classList.remove('btn-loading');
+    }
+}
+
+/**
+ * Opens the modal with provided HTML-safe message
+ * @param {string} message - Message to display inside modal
+ */
+function openModal(message) {
+    modalMessage.innerHTML = message;
+    modal.classList.add('show');
+}
+
+/**
+ * Closes the modal
+ */
+function closeModal() {
+    modal.classList.remove('show');
+}
+
 // ============================================================================
 // FORM SUBMISSION
 // ============================================================================
@@ -274,7 +318,7 @@ async function handleSubmit(e) {
 
     // Show loading
     loading.classList.add('show');
-    submitBtn.disabled = true;
+    setButtonLoading(submitBtn, true, 'Adding...');
 
     // Prepare data
     const data = {
@@ -296,6 +340,15 @@ async function handleSubmit(e) {
         const result = await response.json();
 
         if (result.success) {
+            // Show modal confirmation so it can't be missed
+            const successDetails = [
+                `Amount: ${formatCurrency(parseFloat(amount))}`,
+                `Category: ${selectedCategory}`
+            ];
+            if (notesInput.value.trim()) {
+                successDetails.push(`Notes: ${notesInput.value.trim()}`);
+            }
+            openModal(successDetails.join('<br>'));
             showFeedback('Expense added successfully', 'success');
             // Update budget if returned
             if (result.budget) {
@@ -315,7 +368,7 @@ async function handleSubmit(e) {
         console.error('Error:', error);
     } finally {
         loading.classList.remove('show');
-        submitBtn.disabled = false;
+        setButtonLoading(submitBtn, false);
     }
 }
 
@@ -423,7 +476,7 @@ async function handleUndo() {
     showFeedback('Undoing last expense...', 'success');
 
     loading.classList.add('show');
-    undoBtn.disabled = true;
+    setButtonLoading(undoBtn, true, 'Undoing...');
 
     try {
         const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
@@ -480,10 +533,10 @@ async function handleUndo() {
         console.error('Undo error details:', error);
         console.error('Error stack:', error.stack);
         // Re-enable button on error
-        undoBtn.disabled = false;
         await updateUndoButtonState();
     } finally {
         loading.classList.remove('show');
+        setButtonLoading(undoBtn, false);
     }
 }
 
@@ -575,3 +628,17 @@ function updateBudgetDisplay(budget) {
 function formatCurrency(amount) {
     return '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
+
+// ============================================================================
+// MODAL EVENT HANDLERS
+// ============================================================================
+
+// Close modal on button click
+modalClose.addEventListener('click', closeModal);
+
+// Close modal when clicking outside content
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+        closeModal();
+    }
+});
