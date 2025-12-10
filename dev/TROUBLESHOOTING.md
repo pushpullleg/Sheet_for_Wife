@@ -2,7 +2,7 @@
 
 ## Step 1: Check Browser Console
 
-1. Open your live site: https://pushpullleg.github.io/Sheet_for_Wife/
+1. Open your live site: https://pushpullleg.github.io/budget-tracker/
 2. Press **F12** (or right-click → Inspect)
 3. Click **"Console"** tab
 4. Try adding an expense

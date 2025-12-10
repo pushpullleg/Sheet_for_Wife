@@ -1,4 +1,24 @@
-// Configuration
+/**
+ * Budget Tracker - Client-Side Application
+ * 
+ * This file handles all client-side logic including:
+ * - Form validation and user input handling
+ * - API communication with Google Apps Script
+ * - UI updates and feedback
+ * - Budget display and formatting
+ */
+
+// ============================================================================
+// CONFIGURATION
+// ============================================================================
+
+/**
+ * Application configuration
+ * 
+ * IMPORTANT: Update these values before deployment
+ * - GOOGLE_SCRIPT_URL: Your Google Apps Script Web App URL
+ * - API_KEY: Must match the API key in backend/Code.gs
+ */
 const CONFIG = {
     // Replace with your Google Apps Script Web App URL after deployment
     GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyNel64mjqFn1PeAQYXzUT6_JIhUNqPGk2GQEP69hDpOyMZjh8VUjNgxQiYJdDaIdE3tw/exec',
@@ -6,10 +26,24 @@ const CONFIG = {
     API_KEY: '43619930614212440190980972744666'
 };
 
-// State
+// ============================================================================
+// APPLICATION STATE
+// ============================================================================
+
+/**
+ * Currently selected expense category
+ * @type {string|null}
+ */
 let selectedCategory = null;
 
-// Elements
+// ============================================================================
+// DOM ELEMENTS
+// ============================================================================
+
+/**
+ * Cache all DOM elements for better performance
+ * These are initialized once and reused throughout the application
+ */
 const amountInput = document.getElementById('amount');
 const notesToggle = document.getElementById('notesToggle');
 const notesWrapper = document.getElementById('notesWrapper');
@@ -25,19 +59,42 @@ const amountError = document.getElementById('amountError');
 const categoryError = document.getElementById('categoryError');
 const budgetRemaining = document.getElementById('budgetRemaining');
 
-// Initialize
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
+
+/**
+ * Initialize application when DOM is ready
+ * Sets up event listeners, validates configuration, and loads budget
+ */
 document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     checkConfig();
     fetchBudget(); // Load budget on page load
 });
 
+// ============================================================================
+// CONFIGURATION VALIDATION
+// ============================================================================
+
+/**
+ * Validates that configuration has been set up correctly
+ * Shows error message if placeholders are still present
+ */
 function checkConfig() {
     if (CONFIG.GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE' || CONFIG.API_KEY === 'YOUR_SECRET_API_KEY_HERE') {
         showFeedback('Please configure GOOGLE_SCRIPT_URL and API_KEY in script.js', 'error');
     }
 }
 
+// ============================================================================
+// EVENT LISTENER SETUP
+// ============================================================================
+
+/**
+ * Sets up all event listeners for user interactions
+ * Called once during initialization
+ */
 function setupEventListeners() {
     // Toggle notes section
     notesToggle.addEventListener('click', () => {
@@ -79,6 +136,16 @@ function setupEventListeners() {
     undoBtn.addEventListener('click', handleUndo);
 }
 
+// ============================================================================
+// INPUT VALIDATION
+// ============================================================================
+
+/**
+ * Validates amount input in real-time as user types
+ * Allows only numbers and one decimal point
+ * 
+ * @param {Event} e - Input event
+ */
 function validateAmount(e) {
     const value = e.target.value;
     // Allow only numbers and one decimal point
@@ -99,6 +166,13 @@ function validateAmount(e) {
     }
 }
 
+/**
+ * Formats amount input when user leaves the field (on blur)
+ * Validates and formats to 2 decimal places
+ * Shows error if invalid
+ * 
+ * @param {Event} e - Blur event
+ */
 function formatAmount(e) {
     const value = e.target.value.trim();
     if (!value) return;
@@ -122,6 +196,12 @@ function formatAmount(e) {
     amountError.classList.remove('show');
 }
 
+/**
+ * Validates if a value is a valid positive number
+ * 
+ * @param {string} value - The value to validate
+ * @returns {boolean} True if valid, false otherwise
+ */
 function isValidAmount(value) {
     if (!value || value.trim() === '') return false;
     
@@ -132,7 +212,17 @@ function isValidAmount(value) {
     return !isNaN(num) && num > 0 && isFinite(num);
 }
 
-// Show feedback
+// ============================================================================
+// UI FEEDBACK
+// ============================================================================
+
+/**
+ * Displays feedback message to user
+ * Automatically hides success messages after 3 seconds
+ * 
+ * @param {string} message - Message to display
+ * @param {string} type - Type of feedback: 'success' or 'error'
+ */
 function showFeedback(message, type) {
     feedback.textContent = message;
     feedback.className = `feedback show ${type}`;
@@ -143,7 +233,16 @@ function showFeedback(message, type) {
     }
 }
 
-// Form submission
+// ============================================================================
+// FORM SUBMISSION
+// ============================================================================
+
+/**
+ * Handles form submission when user clicks "Add Expense"
+ * Validates input, sends data to API, and updates UI
+ * 
+ * @param {Event} e - Submit event
+ */
 async function handleSubmit(e) {
     e.preventDefault();
     
@@ -214,7 +313,14 @@ async function handleSubmit(e) {
     }
 }
 
-// Undo last entry
+// ============================================================================
+// UNDO FUNCTIONALITY
+// ============================================================================
+
+/**
+ * Removes the last expense entry from Google Sheets
+ * Confirms with user before deletion
+ */
 async function handleUndo() {
     if (!confirm('Delete the last expense entry?')) return;
 
@@ -255,6 +361,14 @@ async function handleUndo() {
     }
 }
 
+// ============================================================================
+// FORM MANAGEMENT
+// ============================================================================
+
+/**
+ * Resets the form to its initial state
+ * Clears all inputs, removes selections, and hides notes
+ */
 function resetForm() {
     amountInput.value = '';
     amountInput.classList.remove('error');
@@ -268,7 +382,14 @@ function resetForm() {
     amountInput.focus();
 }
 
-// Fetch budget from Google Sheets
+// ============================================================================
+// BUDGET MANAGEMENT
+// ============================================================================
+
+/**
+ * Fetches current budget information from Google Sheets
+ * Called on page load and after expense operations
+ */
 async function fetchBudget() {
     try {
         const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
@@ -295,7 +416,15 @@ async function fetchBudget() {
     }
 }
 
-// Update budget display
+/**
+ * Updates the budget display with current values
+ * Applies color coding based on budget status:
+ * - Red: Negative (over budget)
+ * - Orange: Low (less than 20% remaining)
+ * - Default: Normal
+ * 
+ * @param {Object} budget - Budget object with startingBudget, totalSpent, remaining
+ */
 function updateBudgetDisplay(budget) {
     const remaining = budget.remaining || 0;
     budgetRemaining.textContent = formatCurrency(remaining);
@@ -310,7 +439,13 @@ function updateBudgetDisplay(budget) {
     }
 }
 
-// Format currency with commas
+/**
+ * Formats a number as currency with commas and dollar sign
+ * Example: 1234.56 -> "$1,234.56"
+ * 
+ * @param {number} amount - Amount to format
+ * @returns {string} Formatted currency string
+ */
 function formatCurrency(amount) {
     return '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }

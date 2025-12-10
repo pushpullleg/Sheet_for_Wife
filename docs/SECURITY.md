@@ -56,7 +56,7 @@ While these credentials are visible in the browser (they're in JavaScript), comm
 
 ## Current Deployment
 
-The current deployment at https://pushpullleg.github.io/Sheet_for_Wife/ uses the committed credentials. To secure it:
+The current deployment at https://pushpullleg.github.io/budget-tracker/ uses the committed credentials. To secure it:
 1. Rotate the API key (recommended)
 2. Or make the repository private
 

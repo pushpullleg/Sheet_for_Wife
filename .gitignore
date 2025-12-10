@@ -1,4 +1,5 @@
 # Google Apps Script files (not needed on GitHub)
+backend/Code.gs
 Code.gs
 
 # Configuration files with sensitive data (DO NOT COMMIT)
@@ -6,16 +7,8 @@ Code.gs
 # Future changes to script.js will be tracked unless you uncomment below
 # script.js
 
-# Documentation files (optional - you can include README.md if you want)
-GOOGLE_SHEETS_SETUP.md
-DEPLOYMENT_GUIDE.md
-QUICK_DEPLOY.md
-GIT_PUSH_GUIDE.md
-test-locally.md
-TROUBLESHOOTING.md
-
-# Reference/sample files
-sampleindexcode.md
+# Development notes (personal reference, not for end users)
+# These are already organized in dev/ folder
 
 # OS files
 .DS_Store
