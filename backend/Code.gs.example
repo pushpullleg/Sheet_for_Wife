@@ -86,7 +86,7 @@ function doPost(e) {
     }
     
     if (requestData.action === 'getLastEntry') {
-      return getLastEntry(headers);
+      return getLastEntry(requestData, headers);
     }
     
     if (requestData.action === 'undo') {
@@ -172,10 +172,19 @@ function handleAddExpense(requestData, headers) {
  * Gets the last expense entry details (without deleting)
  * Used to show user what will be undone
  * 
+ * @param {Object} requestData - Request data (for API key validation)
  * @param {Object} headers - CORS headers
  * @returns {TextOutput} JSON response with last entry details
  */
-function getLastEntry(headers) {
+function getLastEntry(requestData, headers) {
+  // Validate API key
+  if (requestData.apiKey !== CONFIG.API_KEY) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: 'Invalid API key'
+    })).setMimeType(ContentService.MimeType.JSON)
+      .setHeaders(headers);
+  }
   const sheet = getSheet();
   const lastRow = sheet.getLastRow();
   

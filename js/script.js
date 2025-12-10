@@ -341,10 +341,16 @@ async function getLastEntry() {
             })
         });
 
+        if (!response.ok) {
+            // If backend doesn't support getLastEntry yet, return null gracefully
+            return null;
+        }
+
         const result = await response.json();
         return result.success ? result.entry : null;
     } catch (error) {
-        console.error('Error fetching last entry:', error);
+        // Silently fail - backend might not have getLastEntry function yet
+        // This is okay, we'll use fallback confirmation
         return null;
     }
 }
@@ -420,6 +426,11 @@ async function handleUndo() {
             })
         });
 
+        // Check response status before parsing
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const result = await response.json();
 
         if (result.success) {
@@ -444,6 +455,8 @@ async function handleUndo() {
     } catch (error) {
         showFeedback('Network error. Please try again.', 'error');
         console.error('Error:', error);
+        // Re-enable button on error
+        undoBtn.disabled = false;
         await updateUndoButtonState();
     } finally {
         loading.classList.remove('show');
