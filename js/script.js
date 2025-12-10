@@ -346,7 +346,15 @@ async function getLastEntry() {
             return null;
         }
 
-        const result = await response.json();
+        // Get response text first to check if it's valid JSON
+        const responseText = await response.text();
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            // If not JSON, backend probably doesn't support this action
+            return null;
+        }
         return result.success ? result.entry : null;
     } catch (error) {
         // Silently fail - backend might not have getLastEntry function yet
@@ -428,10 +436,20 @@ async function handleUndo() {
 
         // Check response status before parsing
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error('HTTP error response:', errorText);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result = await response.json();
+        // Get response text first to check if it's valid JSON
+        const responseText = await response.text();
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('Failed to parse JSON response:', responseText);
+            throw new Error('Invalid JSON response from server');
+        }
 
         if (result.success) {
             const deletedEntry = result.deletedEntry || lastEntry;
@@ -453,8 +471,11 @@ async function handleUndo() {
             await updateUndoButtonState();
         }
     } catch (error) {
-        showFeedback('Network error. Please try again.', 'error');
-        console.error('Error:', error);
+        // Show more specific error message
+        const errorMsg = error.message || 'Network error. Please try again.';
+        showFeedback(errorMsg, 'error');
+        console.error('Undo error details:', error);
+        console.error('Error stack:', error.stack);
         // Re-enable button on error
         undoBtn.disabled = false;
         await updateUndoButtonState();
