@@ -85,8 +85,12 @@ function doPost(e) {
       return handleGetBudget(headers);
     }
     
+    if (requestData.action === 'getLastEntry') {
+      return getLastEntry(headers);
+    }
+    
     if (requestData.action === 'undo') {
-      return handleUndo(headers);
+      return handleUndo(requestData, headers);
     }
     
     // Default action: add expense
@@ -165,8 +169,43 @@ function handleAddExpense(requestData, headers) {
 }
 
 /**
+ * Gets the last expense entry details (without deleting)
+ * Used to show user what will be undone
+ * 
+ * @param {Object} headers - CORS headers
+ * @returns {TextOutput} JSON response with last entry details
+ */
+function getLastEntry(headers) {
+  const sheet = getSheet();
+  const lastRow = sheet.getLastRow();
+  
+  if (lastRow <= 1) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: 'No expenses found'
+    })).setMimeType(ContentService.MimeType.JSON)
+      .setHeaders(headers);
+  }
+  
+  // Get last row data (excluding header)
+  const lastRowData = sheet.getRange(lastRow, 1, 1, 4).getValues()[0];
+  
+  return ContentService.createTextOutput(JSON.stringify({
+    success: true,
+    entry: {
+      date: lastRowData[0],
+      amount: lastRowData[1],
+      category: lastRowData[2],
+      notes: lastRowData[3] || ''
+    }
+  })).setMimeType(ContentService.MimeType.JSON)
+    .setHeaders(headers);
+}
+
+/**
  * Handles undoing the last expense entry
  * 
+ * @param {Object} requestData - Request data
  * @param {Object} headers - CORS headers
  * @returns {TextOutput} JSON response
  */
@@ -191,6 +230,14 @@ function handleUndo(requestData, headers) {
       .setHeaders(headers);
   }
   
+  // Get last entry details before deleting (for confirmation message)
+  const lastRowData = sheet.getRange(lastRow, 1, 1, 4).getValues()[0];
+  const deletedEntry = {
+    amount: lastRowData[1],
+    category: lastRowData[2],
+    date: lastRowData[0]
+  };
+  
   // Delete last row (excluding header)
   sheet.deleteRow(lastRow);
   
@@ -200,6 +247,7 @@ function handleUndo(requestData, headers) {
   return ContentService.createTextOutput(JSON.stringify({
     success: true,
     message: 'Last expense deleted',
+    deletedEntry: deletedEntry,
     budget: budgetInfo
   })).setMimeType(ContentService.MimeType.JSON)
     .setHeaders(headers);

@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     checkConfig();
     fetchBudget(); // Load budget on page load
+    updateUndoButtonState(); // Check if undo is available
 });
 
 // ============================================================================
@@ -299,6 +300,8 @@ async function handleSubmit(e) {
             } else {
                 fetchBudget(); // Fetch budget if not returned
             }
+            // Update undo button state after adding expense
+            await updateUndoButtonState();
             // Reset form
             resetForm();
         } else {
@@ -318,11 +321,75 @@ async function handleSubmit(e) {
 // ============================================================================
 
 /**
+ * Fetches the last expense entry to show user what will be deleted
+ * 
+ * @returns {Object|null} Last entry details or null if none exists
+ */
+async function getLastEntry() {
+    try {
+        const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8',
+            },
+            body: JSON.stringify({
+                apiKey: CONFIG.API_KEY,
+                action: 'getLastEntry'
+            })
+        });
+
+        const result = await response.json();
+        return result.success ? result.entry : null;
+    } catch (error) {
+        console.error('Error fetching last entry:', error);
+        return null;
+    }
+}
+
+/**
+ * Updates the undo button state based on whether entries exist
+ */
+async function updateUndoButtonState() {
+    const lastEntry = await getLastEntry();
+    if (lastEntry) {
+        undoBtn.disabled = false;
+        undoBtn.title = `Undo last entry: ${formatCurrency(lastEntry.amount)} - ${lastEntry.category}`;
+    } else {
+        undoBtn.disabled = true;
+        undoBtn.title = 'No expenses to undo';
+    }
+}
+
+/**
  * Removes the last expense entry from Google Sheets
- * Confirms with user before deletion
+ * Shows what will be deleted and confirms with user before deletion
  */
 async function handleUndo() {
-    if (!confirm('Delete the last expense entry?')) return;
+    // First, get the last entry to show user what will be deleted
+    const lastEntry = await getLastEntry();
+    
+    if (!lastEntry) {
+        showFeedback('No expenses to undo', 'error');
+        return;
+    }
+
+    // Format the date for display
+    const entryDate = new Date(lastEntry.date);
+    const dateStr = entryDate.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+    });
+
+    // Show detailed confirmation
+    const confirmMessage = `Delete the last expense?\n\n` +
+        `Amount: ${formatCurrency(lastEntry.amount)}\n` +
+        `Category: ${lastEntry.category}\n` +
+        `Date: ${dateStr}` +
+        (lastEntry.notes ? `\nNotes: ${lastEntry.notes}` : '');
+
+    if (!confirm(confirmMessage)) return;
 
     loading.classList.add('show');
     undoBtn.disabled = true;
@@ -342,22 +409,30 @@ async function handleUndo() {
         const result = await response.json();
 
         if (result.success) {
-            showFeedback('Last expense deleted', 'success');
+            const deletedEntry = result.deletedEntry || lastEntry;
+            showFeedback(
+                `Deleted: ${formatCurrency(deletedEntry.amount)} - ${deletedEntry.category}`, 
+                'success'
+            );
             // Update budget if returned
             if (result.budget) {
                 updateBudgetDisplay(result.budget);
             } else {
                 fetchBudget(); // Fetch budget if not returned
             }
+            // Update undo button state after deletion
+            await updateUndoButtonState();
         } else {
             showFeedback(result.error || 'Failed to undo', 'error');
+            // Update button state in case of error
+            await updateUndoButtonState();
         }
     } catch (error) {
         showFeedback('Network error. Please try again.', 'error');
         console.error('Error:', error);
+        await updateUndoButtonState();
     } finally {
         loading.classList.remove('show');
-        undoBtn.disabled = false;
     }
 }
 

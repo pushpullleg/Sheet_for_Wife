@@ -217,9 +217,40 @@ async function handleSubmit(e) {
     }
 }
 
+// Get last entry details
+async function getLastEntry() {
+    try {
+        const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ apiKey: CONFIG.API_KEY, action: 'getLastEntry' })
+        });
+        const result = await response.json();
+        return result.success ? result.entry : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+// Update undo button state
+async function updateUndoButtonState() {
+    const lastEntry = await getLastEntry();
+    undoBtn.disabled = !lastEntry;
+    if (lastEntry) {
+        undoBtn.title = `Undo: ${formatCurrency(lastEntry.amount)} - ${lastEntry.category}`;
+    }
+}
+
 // Undo last entry
 async function handleUndo() {
-    if (!confirm('Delete the last expense entry?')) return;
+    const lastEntry = await getLastEntry();
+    if (!lastEntry) {
+        showFeedback('No expenses to undo', 'error');
+        return;
+    }
+    
+    const confirmMsg = `Delete the last expense?\n\nAmount: ${formatCurrency(lastEntry.amount)}\nCategory: ${lastEntry.category}`;
+    if (!confirm(confirmMsg)) return;
 
     loading.classList.add('show');
     undoBtn.disabled = true;
