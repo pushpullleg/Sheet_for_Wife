@@ -9,8 +9,8 @@ This document explains the technical architecture and design decisions of the Gi
 │                    User's Mobile Browser                     │
 │  ┌──────────────────────────────────────────────────────┐   │
 │  │  index.html (UI)                                      │   │
-│  │  ├── style.css (Styling)                             │   │
-│  │  └── script.js (Logic)                               │   │
+│  │  ├── css/style.css (Styling)                        │   │
+│  │  └── js/script.js (Logic)                           │   │
 │  └──────────────────────────────────────────────────────┘   │
 └───────────────────────┬───────────────────────────────────┘
                           │ HTTPS POST
@@ -43,7 +43,7 @@ This document explains the technical architecture and design decisions of the Gi
 
 ## Component Responsibilities
 
-### Frontend (`index.html`, `style.css`, `script.js`)
+### Frontend (`index.html`, `css/style.css`, `js/script.js`)
 
 **Responsibilities:**
 - User interface rendering

@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function checkConfig() {
     if (CONFIG.GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE' || CONFIG.API_KEY === 'YOUR_SECRET_API_KEY_HERE') {
-        showFeedback('Please configure GOOGLE_SCRIPT_URL and API_KEY in script.js', 'error');
+        showFeedback('Please configure GOOGLE_SCRIPT_URL and API_KEY in js/script.js', 'error');
     }
 }
 

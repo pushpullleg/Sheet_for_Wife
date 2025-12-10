@@ -4,8 +4,8 @@
 
 ✅ **Upload these files:**
 - `index.html`
-- `style.css`
-- `script.js`
+- `css/style.css`
+- `js/script.js`
 - `README.md` (optional)
 
 ❌ **DO NOT upload:**
@@ -54,7 +54,7 @@ You have 3 options - choose the easiest for you:
 ```bash
 cd /path/to/your/project
 git init
-git add index.html style.css script.js README.md
+git add index.html css/style.css js/script.js README.md
 git commit -m "Initial commit - Budget Tracker"
 git branch -M main
 git remote add origin https://github.com/YOUR_USERNAME/budget-tracker.git
@@ -98,7 +98,7 @@ git push -u origin main
 - Make sure repository is Public
 
 **Still getting network errors?**
-- Verify API key is in both Code.gs and script.js
+- Verify API key is in both Code.gs and js/script.js
 - Check browser console (F12) for specific errors
 - Make sure Google Apps Script is deployed correctly
 

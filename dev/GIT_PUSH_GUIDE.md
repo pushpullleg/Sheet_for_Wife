@@ -23,7 +23,7 @@ cd "C:\Users\50380788\Documents\budget-tracker"
 git init
 
 # Add files to staging (only the files we need)
-git add index.html style.css script.js README.md
+git add index.html css/style.css js/script.js README.md
 
 # Commit the files
 git commit -m "Initial commit - Budget Tracker"
@@ -57,8 +57,8 @@ git push -u origin main
 
 ✅ **These files will be pushed:**
 - `index.html`
-- `style.css`
-- `script.js`
+- `css/style.css`
+- `js/script.js`
 - `README.md`
 
 ❌ **These files will NOT be pushed** (not added to git):
@@ -94,7 +94,7 @@ If Git asks for username/password:
 ```powershell
 cd "C:\Users\50380788\Documents\budget-tracker"
 git init
-git add index.html style.css script.js README.md
+git add index.html css/style.css js/script.js README.md
 git commit -m "Initial commit - Budget Tracker"
 git branch -M main
 git remote add origin https://github.com/YOUR_USERNAME/budget-tracker.git

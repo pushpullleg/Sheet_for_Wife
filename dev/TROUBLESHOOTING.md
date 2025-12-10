@@ -78,7 +78,7 @@ Sometimes you need to create a NEW deployment:
 3. Click **"New version"**
 4. Click **"Deploy"**
 5. **Copy the new URL** (it might be the same or different)
-6. Update `script.js` if the URL changed
+6. Update `js/script.js` if the URL changed
 7. Commit and push to GitHub
 
 ### Fix 2: Check Spreadsheet ID
@@ -122,7 +122,7 @@ This should return JSON with budget info if everything is working.
 
 ## Quick Checklist
 
-- [ ] API key in Code.gs matches script.js: `43619930614212440190980972744666`
+- [ ] API key in Code.gs matches js/script.js: `43619930614212440190980972744666`
 - [ ] Spreadsheet ID is set in Code.gs (not placeholder)
 - [ ] Google Apps Script is deployed as "Web app"
 - [ ] "Who has access" is set to "Anyone"

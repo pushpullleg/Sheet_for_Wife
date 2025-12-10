@@ -71,7 +71,7 @@ const CONFIG = {
 1. Go to https://www.random.org/strings/
 2. Generate: 1 string, 32 characters, Alphanumeric
 3. Copy the result
-4. Use this same key in both `Code.gs` and `script.js`
+4. Use this same key in both `Code.gs` and `js/script.js`
 
 ### 2.3 Deploy as Web App
 
@@ -89,7 +89,7 @@ const CONFIG = {
 
 ## Step 3: Configure Frontend
 
-1. Copy `script.js.example` to `script.js` (or edit existing `script.js`)
+1. Copy `js/script.js.example` to `js/script.js` (or edit existing `js/script.js`)
 2. Update the `CONFIG` object:
 
 ```javascript
@@ -99,7 +99,7 @@ const CONFIG = {
 };
 ```
 
-**Important**: The API key in `script.js` must **exactly match** the one in `Code.gs`.
+**Important**: The API key in `js/script.js` must **exactly match** the one in `Code.gs`.
 
 ---
 
@@ -111,8 +111,8 @@ const CONFIG = {
 2. Make it **Public** (required for free GitHub Pages)
 3. Upload these files:
    - `index.html`
-   - `style.css`
-   - `script.js`
+   - `css/style.css`
+   - `js/script.js`
    - `README.md` (optional)
 4. Go to **Settings** → **Pages**
 5. Select **"Deploy from a branch"**
@@ -123,7 +123,7 @@ const CONFIG = {
 
 ```bash
 git init
-git add index.html style.css script.js README.md
+git add index.html css/style.css js/script.js README.md
 git commit -m "Initial commit"
 git branch -M main
 git remote add origin https://github.com/YOUR_USERNAME/REPO_NAME.git
@@ -153,7 +153,7 @@ Then enable GitHub Pages (Settings → Pages).
 - [ ] `Code.gs` configured with Spreadsheet ID and API key
 - [ ] Google Apps Script deployed as web app
 - [ ] Web App URL copied
-- [ ] `script.js` configured with Web App URL and API key
+- [ ] `js/script.js` configured with Web App URL and API key
 - [ ] Files uploaded to GitHub
 - [ ] GitHub Pages enabled
 - [ ] Test expense added successfully
@@ -164,7 +164,7 @@ Then enable GitHub Pages (Settings → Pages).
 ## Troubleshooting
 
 ### "Invalid API key"
-- Verify API key in `Code.gs` matches `script.js` exactly
+- Verify API key in `Code.gs` matches `js/script.js` exactly
 - Check for extra spaces or typos
 - Make sure you saved `Code.gs` after updating
 

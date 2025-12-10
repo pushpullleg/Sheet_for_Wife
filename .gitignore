@@ -3,9 +3,9 @@ backend/Code.gs
 Code.gs
 
 # Configuration files with sensitive data (DO NOT COMMIT)
-# NOTE: script.js is currently in git for deployment
-# Future changes to script.js will be tracked unless you uncomment below
-# script.js
+# NOTE: js/script.js is currently in git for deployment
+# Future changes to js/script.js will be tracked unless you uncomment below
+# js/script.js
 
 # Development notes (personal reference, not for end users)
 # These are already organized in dev/ folder

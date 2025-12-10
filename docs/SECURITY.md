@@ -2,7 +2,7 @@
 
 ## ⚠️ Important: Credentials in Git History
 
-**Current Status**: The production API key and Google Apps Script URL are currently committed in `script.js` in the git history. This is a security risk.
+**Current Status**: The production API key and Google Apps Script URL are currently committed in `js/script.js` in the git history. This is a security risk.
 
 ## What You Should Do
 
@@ -19,13 +19,13 @@ Since the credentials are already in git history, the best practice is to rotate
    - Update `API_KEY` with your new key
    - Save and redeploy
 
-3. **Update your local `script.js`:**
-   - Copy `script.js.example` to `script.js`
+3. **Update your local `js/script.js`:**
+   - Copy `js/script.js.example` to `js/script.js`
    - Fill in your new API key and URL
-   - **DO NOT commit `script.js`** (it's now in `.gitignore`)
+   - **DO NOT commit `js/script.js`** (it's now in `.gitignore`)
 
-4. **Deploy the new `script.js`:**
-   - Since `script.js` is now gitignored, you'll need to manually upload it to GitHub
+4. **Deploy the new `js/script.js`:**
+   - Since `js/script.js` is now gitignored, you'll need to manually upload it to GitHub
    - Or temporarily remove it from `.gitignore`, commit, then add it back
 
 ### Option 2: Make Repository Private
@@ -36,9 +36,9 @@ If you don't want to rotate credentials:
 
 ## Going Forward
 
-1. **Use the template**: `script.js.example` contains placeholders
-2. **Never commit `script.js`**: It's now in `.gitignore`
-3. **For deployment**: You'll need to manually manage `script.js` since it's gitignored
+1. **Use the template**: `js/script.js.example` contains placeholders
+2. **Never commit `js/script.js`**: It's now in `.gitignore`
+3. **For deployment**: You'll need to manually manage `js/script.js` since it's gitignored
 
 ## Why This Matters
 

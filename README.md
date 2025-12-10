@@ -80,10 +80,12 @@ See [Complete Setup Guide](docs/SETUP.md) for step-by-step installation instruct
 ```
 gift-budget-tracker/
 ├── index.html              # Main application page
-├── style.css               # Application styles
-├── script.js               # Application logic
-├── script.js.example       # Configuration template
 ├── README.md               # This file
+├── css/                    # Stylesheets
+│   └── style.css          # Application styles
+├── js/                     # JavaScript files
+│   ├── script.js          # Application logic
+│   └── script.js.example  # Configuration template
 ├── docs/                   # User-facing documentation
 │   ├── SETUP.md           # Complete setup guide
 │   ├── SECURITY.md        # Security considerations
@@ -93,6 +95,7 @@ gift-budget-tracker/
 └── dev/                    # Development notes (personal reference)
     ├── DEPLOYMENT_GUIDE.md
     ├── TROUBLESHOOTING.md
+    ├── sampleindexcode.md # Reference design code
     └── ...
 ```
 
@@ -135,11 +138,11 @@ The app requires configuration in two places:
    - API Key
    - Starting Budget (your gift amount, e.g., 2500)
 
-2. **Frontend** (`script.js`):
+2. **Frontend** (`js/script.js`):
    - Google Apps Script Web App URL
    - API Key (must match backend)
 
-See `script.js.example` for the template.
+See `js/script.js.example` for the template.
 
 ## Documentation
 
